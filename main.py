@@ -30,3 +30,19 @@ contract InterestRateModel {
     ) {
         require(_optimalUtilization <= RAY, "INVALID_OPTIMAL_UTILIZATION");
         baseVariableBorrowRate = _baseVariableBorrowRate;
+        slope1 = _slope1;
+        slope2 = _slope2;
+        optimalUtilization = _optimalUtilization;
+    }
+
+    /// @notice Compute utilization of a reserve.
+    /// @param totalLiquidity Total liquidity (deposits) in the reserve
+    /// @param totalBorrows Total borrows in the reserve
+    /// @return utilization Utilization in ray (0..1e27)
+    function getUtilization(
+        uint256 totalLiquidity,
+        uint256 totalBorrows
+    ) public pure returns (uint256 utilization) {
+        if (totalBorrows == 0 || totalLiquidity == 0) {
+            return 0;
+        }
