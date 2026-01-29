@@ -46,3 +46,19 @@ contract InterestRateModel {
         if (totalBorrows == 0 || totalLiquidity == 0) {
             return 0;
         }
+        // utilization = totalBorrows / totalLiquidity (in ray)
+        utilization = (totalBorrows * 1e27) / totalLiquidity;
+    }
+
+    /// @notice Get current variable borrow rate for a reserve.
+    /// @param totalLiquidity Total liquidity
+    /// @param totalBorrows Total borrows
+    function getVariableBorrowRate(
+        uint256 totalLiquidity,
+        uint256 totalBorrows
+    ) external view returns (uint256) {
+        uint256 utilization = getUtilization(totalLiquidity, totalBorrows);
+
+        if (utilization == 0) {
+            return baseVariableBorrowRate;
+        }
