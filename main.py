@@ -14,3 +14,19 @@ contract InterestRateModel {
     uint256 public immutable baseVariableBorrowRate;
 
     /// @notice Slope of the borrow rate when utilization is below the kink.
+    uint256 public immutable slope1;
+
+    /// @notice Slope of the borrow rate when utilization is above the kink.
+    uint256 public immutable slope2;
+
+    /// @notice Utilization point (in ray) where the slope changes.
+    uint256 public immutable optimalUtilization;
+
+    constructor(
+        uint256 _baseVariableBorrowRate,
+        uint256 _slope1,
+        uint256 _slope2,
+        uint256 _optimalUtilization
+    ) {
+        require(_optimalUtilization <= RAY, "INVALID_OPTIMAL_UTILIZATION");
+        baseVariableBorrowRate = _baseVariableBorrowRate;
