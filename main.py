@@ -62,3 +62,19 @@ contract InterestRateModel {
         if (utilization == 0) {
             return baseVariableBorrowRate;
         }
+
+        if (utilization <= optimalUtilization) {
+            // Linear increase up to the kink
+            // rate = base + slope1 * utilization / optimalUtilization
+            uint256 factor = (utilization * 1e27) / optimalUtilization;
+            return baseVariableBorrowRate + (slope1 * factor) / 1e27;
+        } else {
+            // Beyond kink
+            // rate = base + slope1 + slope2 * (utilization - optimalUtilization) / (RAY - optimalUtilization)
+            uint256 excessUtil = utilization - optimalUtilization;
+            uint256 denom = (RAY - optimalUtilization);
+            uint256 factor = denom == 0 ? 0 : (excessUtil * 1e27) / denom;
+            return baseVariableBorrowRate + slope1 + (slope2 * factor) / 1e27;
+        }
+    }
+}
